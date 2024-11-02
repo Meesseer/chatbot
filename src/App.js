@@ -1,24 +1,27 @@
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import { Box, Grid } from '@mui/material';
+import CssBaseline from '@mui/material/CssBaseline';
+import SideAppBar from './components/Sidebar/Sidebar';
+import { Outlet } from 'react-router-dom';
 
 function App() {
+  const [chat, setChat] = useState([]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <CssBaseline />
+      <Grid container>
+        <Grid item xs={3}>
+          <Box>
+            <SideAppBar setChat={setChat}  />
+          </Box>
+        </Grid>
+        <Grid item xs={9}>
+          <Outlet context={{ chat, setChat }} />
+        </Grid>
+      </Grid>
+    </>
   );
 }
 
