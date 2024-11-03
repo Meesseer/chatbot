@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Box, Typography, Grid, Card, CardActionArea, CardContent, Button, TextField, IconButton, Modal, Rating } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import bigicon from "../../Assets/bigicon.png"; 
 import data from "../../aidata/sampleData.json"; 
 import ResponsiveDrawer from '../../components/Sidebar/Sidebar';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
 const Home = () => {
   const [responseMessage, setResponseMessage] = useState('');
@@ -20,6 +21,8 @@ const Home = () => {
   const [filterRating, setFilterRating] = useState(0);
   const [chatStarted, setChatStarted] = useState(false);
   const chatEndRef = useRef(null);
+  const inputRef = useRef(null);
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleCardClick = (input) => {
     setShowCards(false);
@@ -42,6 +45,8 @@ const Home = () => {
     scrollToBottom();
   };
 
+
+
   const handleInputChange = (event) => {
     setUserInput(event.target.value);
   };
@@ -49,20 +54,24 @@ const Home = () => {
   const handleInputSubmit = () => {
     if (!userInput.trim()) return;
     setShowCards(false);
-    setChatStarted(true); // Set chat started to true
+    setChatStarted(true); 
     addMessageToChat(userInput, true);
     handleResponse(userInput);
     setUserInput('');
   };
 
   const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    chatEndRef.current?.scrollIntoView({behavior:"smooth"})
   };
+
+  useEffect(()=>{
+    scrollToBottom()
+  },[chatMessages])
 
   const handleSaveChat = () => {
     setSavedChats(prevChats => [...prevChats, { messages: chatMessages, rating: starRating }]);
-    addMessageToChat("Chat saved successfully!", false);
-    setStarRating(0); // Reset star rating after saving
+    enqueueSnackbar("Chat Saved Successfully") 
+    setStarRating(0); 
   };
 
   const handleThumbsUpClick = () => {
@@ -70,7 +79,7 @@ const Home = () => {
   };
 
   const handleRatingSubmit = () => {
-    addMessageToChat(`Rating: ${starRating} star${starRating > 1 ? 's' : ''}`, false);
+    enqueueSnackbar(`Rating: ${starRating} star${starRating > 1 ? 's' : ''}`);
     setOpenRating(false);
   };
 
@@ -95,7 +104,7 @@ const Home = () => {
     setShowPastConversations(false)
   };
 
-  const filteredChats = savedChats.filter(chat => chat.rating >= filterRating);
+  const filteredChats = savedChats.filter(chat => chat.rating === filterRating);
 
   return (
     <Box sx={{ padding: 2 }}>
@@ -265,10 +274,12 @@ const Home = () => {
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
         <TextField
           value={userInput}
+          inputRef={inputRef}
           onChange={handleInputChange}
           placeholder="Type your message..."
           fullWidth
-          disabled={showPastConversations} 
+          disabled={showPastConversations}
+          autoFocus
         />
         <Button onClick={handleInputSubmit} disabled={showPastConversations}>Send</Button>
         <IconButton onClick={handleThumbsUpClick}>
@@ -277,10 +288,11 @@ const Home = () => {
         <IconButton onClick={handleThumbsDownClick}>
           <ThumbDownIcon />
         </IconButton>
-        <Button onClick={handleSaveChat} disabled={showPastConversations}>Save Chat</Button>
+        {chatMessages.length > 0 ?<Button onClick={handleSaveChat} disabled={showPastConversations}>Save Chat</Button> :<Button onClick={handleSaveChat} disabled>Save Chat</Button>  }
+        
       </Box>
 
-      {/* Rating Modal */}
+      
       <Modal open={openRating} onClose={() => setOpenRating(false)}>
         <Box sx={{ padding: 2, backgroundColor: 'white', borderRadius: 2, boxShadow: 3 }}>
           <Typography variant="h6">Rate this conversation:</Typography>
@@ -293,7 +305,7 @@ const Home = () => {
         </Box>
       </Modal>
 
-      {/* Feedback Modal */}
+   
       <Modal open={openFeedbackModal} onClose={() => setOpenFeedbackModal(false)}>
         <Box sx={{ padding: 2, backgroundColor: 'white', borderRadius: 2, boxShadow: 3 }}>
           <Typography variant="h6">Leave Feedback:</Typography>
@@ -308,7 +320,7 @@ const Home = () => {
           <Button onClick={handleFeedbackSubmit}>Submit Feedback</Button>
         </Box>
       </Modal>
-      <ResponsiveDrawer onShowPastConversations={() => setShowPastConversations(true)} onNewChat={resetChat}/>
+      <ResponsiveDrawer savedChats={savedChats} onShowPastConversations={() => setShowPastConversations(true)} onNewChat={resetChat}/>
     </Box>
   );
 }

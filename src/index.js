@@ -4,9 +4,7 @@ import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
 import Home from './Pages/Home/Home';
-// import History from './Pages/History/History';
 
-// Define the routes
 const router = createBrowserRouter([
   {
     path: '/',
@@ -16,10 +14,7 @@ const router = createBrowserRouter([
         path: '/',
         element: <Home /> // Home page rendered within App layout
       },
-      {
-        path: '/history',
-        // element: <History /> // History page rendered within App layout
-      },
+    
     ],
   },
 ]);

@@ -8,7 +8,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import bot from "../../Assets/bot.png";
 import edit from "../../Assets/edit.png";
 
-export default function ResponsiveDrawer({ onShowPastConversations, onNewChat }) {
+export default function ResponsiveDrawer({ onShowPastConversations, onNewChat, savedChats = []}) {
   const theme = useTheme();
   const isMediumUp = useMediaQuery(theme.breakpoints.up('md'));
   const [open, setOpen] = React.useState(isMediumUp);
@@ -43,16 +43,18 @@ export default function ResponsiveDrawer({ onShowPastConversations, onNewChat })
           <Box component="img" src={edit} alt="icon" sx={{ width: 24, height: 24, ml: 1 }} />
         </Button>
         <Box sx={{ ml: 5, mt: 2 }}>
-          <Button
+         <Button
             sx={{
               background: "#D7C7F4",
               color: "black",
             }}
             variant="contained"
             onClick={onShowPastConversations} 
+            disabled={savedChats.length === 0 }
           >
             Past Conversations
           </Button>
+          
         </Box>
       </Box>
     </Box>

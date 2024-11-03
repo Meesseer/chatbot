@@ -4,6 +4,7 @@ import { Box, Grid } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 import SideAppBar from './components/Sidebar/Sidebar';
 import { Outlet } from 'react-router-dom';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 
 function App() {
   const [chat, setChat] = useState([]);
@@ -11,6 +12,7 @@ function App() {
   return (
     <>
       <CssBaseline />
+      <SnackbarProvider maxSnack={3}>
       <Grid container>
         <Grid item xs={3}>
           <Box>
@@ -21,6 +23,7 @@ function App() {
           <Outlet context={{ chat, setChat }} />
         </Grid>
       </Grid>
+      </SnackbarProvider>
     </>
   );
 }
