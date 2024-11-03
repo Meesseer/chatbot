@@ -103,6 +103,12 @@ const Home = () => {
     setChatStarted(false);
     setShowPastConversations(false)
   };
+  const handleInputKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      handleInputSubmit(); 
+    }
+  };
 
   const filteredChats = savedChats.filter(chat => chat.rating === filterRating);
 
@@ -275,6 +281,7 @@ const Home = () => {
         <TextField
           value={userInput}
           inputRef={inputRef}
+          onKeyDown={handleInputKeyDown}
           onChange={handleInputChange}
           placeholder="Type your message..."
           fullWidth
